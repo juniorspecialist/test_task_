@@ -10,6 +10,12 @@ body {
     padding: 0 0 60px;
 }
 
+#login-form{
+    /*border: 1px solid red;*/
+    /*margin: 0 auto;*/
+    /*width: 50%;*/
+}
+
 .wrap > .container {
     padding: 70px 15px 20px;
 }
