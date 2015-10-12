@@ -39,20 +39,26 @@ class LoginForm extends Model
      */
     public function checkAttempts(){
 
+        //TODO проверить работу счётчика кол-ва попыток
         $count = Yii::$app->session->get("attempts");
 
         if($count==3){
-            $this->addError("username", "Попробуйте ещё раз через ");
+            $this->addError("username", "Попробуйте ещё раз через ".(Yii::$app->session->get("attempts_last_time")). " сек.");
         }
-
-        if($count)
+        if($count<3)
         {
-            $count++;
+            if($count)
+            {
+                $count++;
 
-            Yii::$app->session->set("attempts", $count);
-        }else{
-            Yii::$app->session->set("attempts", 1);
+                Yii::$app->session->set("attempts", $count);
+                Yii::$app->session->set("attempts_last_time", time());
+            }else{
+                Yii::$app->session->set("attempts", 1);
+                Yii::$app->session->set("attempts_last_time", time());
+            }
         }
+
     }
 
 
@@ -81,6 +87,9 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
+            Yii::$app->session->set("attempts", 0);
+            Yii::$app->session->set("attempts_last_time", time());
+
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
         }
         return false;
