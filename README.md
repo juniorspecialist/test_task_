@@ -4,3 +4,7 @@
 2)Переименовать файл test_task/web/test.htaccess на test_task/web/.htaccess 
 3)Проставить права  755 на все папки и файлы проекта
 4) запускаем index.php в директории /web
+
+авторизация пользователя:
+admin
+admin
