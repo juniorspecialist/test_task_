@@ -27,7 +27,8 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'loginUrl' => ['site/login'],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -49,6 +50,14 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
+
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => true,
+
+            'rules' => require(__DIR__ . '/urls.php'),
+        ],
     ],
     'params' => $params,
 ];

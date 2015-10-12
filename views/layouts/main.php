@@ -39,7 +39,7 @@ AppAsset::register($this);
                 [
                     'label' => 'Выход',
                     'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post'],
+                    //'linkOptions' => ['data' => ['method'=>'post']],
                     'visible'=>(Yii::$app->user->isGuest)?false:true
                 ],
         ],

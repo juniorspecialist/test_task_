@@ -29,8 +29,32 @@ class LoginForm extends Model
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+
+            ['username','checkAttempts'],
         ];
     }
+
+    /*
+     * validation attempts
+     */
+    public function checkAttempts(){
+
+        $count = Yii::$app->session->get("attempts");
+
+        if($count==3){
+            $this->addError("username", "Попробуйте ещё раз через ");
+        }
+
+        if($count)
+        {
+            $count++;
+
+            Yii::$app->session->set("attempts", $count);
+        }else{
+            Yii::$app->session->set("attempts", 1);
+        }
+    }
+
 
     /**
      * Validates the password.
@@ -45,7 +69,7 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, 'Не верно указано имя пользователя или пароль.');
             }
         }
     }
