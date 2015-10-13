@@ -27,6 +27,9 @@ class LoginForm extends Model
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
+
+            ['username','checkAttempts'],
+
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
 
@@ -39,26 +42,35 @@ class LoginForm extends Model
      */
     public function checkAttempts(){
 
-        //TODO проверить работу счётчика кол-ва попыток
         $count = Yii::$app->session->get("attempts");
 
-        if($count==3){
-            $this->addError("username", "Попробуйте ещё раз через ".(Yii::$app->session->get("attempts_last_time")). " сек.");
-        }
-        if($count<3)
+        //проверим не был ли превышен лимит попыток неудачного входа
+        if(!$this->hasErrors())
         {
-            if($count)
+            if($count==3)
+            {
+                //сверим время после последней попытки авторизации с текущим
+                $delta = (time() - Yii::$app->session->get("attempts_last_time"));
+
+                if($delta<300)
+                {
+                    $this->addError("username", "Попробуйте ещё раз через " . (300 - $delta) . " сек.");
+                }else {
+                    //если прошло более 5ти минут - сбрасываем счётчики неудачных попыток
+                    //очистка меток попыток
+                    Yii::$app->session->remove('attempts_last_time');
+                    Yii::$app->session->remove('attempts');
+                }
+            }
+        }else{
+            if($count<3)
             {
                 $count++;
 
                 Yii::$app->session->set("attempts", $count);
                 Yii::$app->session->set("attempts_last_time", time());
-            }else{
-                Yii::$app->session->set("attempts", 1);
-                Yii::$app->session->set("attempts_last_time", time());
             }
         }
-
     }
 
 
@@ -87,8 +99,9 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            Yii::$app->session->set("attempts", 0);
-            Yii::$app->session->set("attempts_last_time", time());
+            //очистка меток попыток
+            Yii::$app->session->remove('attempts_last_time');
+            Yii::$app->session->remove('attempts');
 
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
         }
