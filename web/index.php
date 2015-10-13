@@ -10,6 +10,3 @@ require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 $config = require(__DIR__ . '/../config/web.php');
 
 (new yii\web\Application($config))->run();
-
-//Yii::$app->session->remove('attempts_last_time');
-//Yii::$app->session->remove('attempts');
